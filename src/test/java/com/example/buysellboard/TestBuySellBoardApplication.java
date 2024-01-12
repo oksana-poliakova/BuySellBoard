@@ -10,14 +10,14 @@ import org.testcontainers.utility.DockerImageName;
 @TestConfiguration(proxyBeanMethods = false)
 public class TestBuySellBoardApplication {
 
-	@Bean
-	@ServiceConnection
-	PostgreSQLContainer<?> postgresContainer() {
-		return new PostgreSQLContainer<>(DockerImageName.parse("postgres:latest"));
-	}
+    @Bean
+    @ServiceConnection
+    PostgreSQLContainer<?> postgresContainer() {
+        return new PostgreSQLContainer<>(DockerImageName.parse("postgres:latest"));
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.from(BuySellBoardApplication::main).with(TestBuySellBoardApplication.class).run(args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.from(BuySellBoardApplication::main).with(TestBuySellBoardApplication.class).run(args);
+    }
 
 }

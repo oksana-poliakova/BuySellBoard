@@ -9,6 +9,7 @@ import java.util.UUID;
 /**
  * @author oksanapoliakova on 12.01.2024
  * @projectName BuySellBoard
+ * Repository interface for managing Product entities in the database.
  */
 
 @Repository

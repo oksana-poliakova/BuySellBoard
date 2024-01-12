@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author oksanapoliakova on 12.01.2024
@@ -50,6 +51,17 @@ public class ProductService {
      */
     public List<Product> getAllProducts() {
         return productRepository.findAll();
+    }
+
+    /**
+     * Deletes a product from the database using its unique identifier.
+     * @param product The Product entity to be deleted from the database.
+     */
+    public void deleteProductById(Product product) {
+        if (product == null) {
+            throw new IllegalArgumentException("Product must not be null");
+        }
+        productRepository.deleteById(product.getId());
     }
 
     /**

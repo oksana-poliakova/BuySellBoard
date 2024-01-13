@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
+        <meta charset="UTF-8">
         <title>BuySellBoard</title>
     </head>
     <body>
@@ -18,19 +19,19 @@
             <form action="/product/create" method="post">
                 <label for="title">Title:</label>
                 <input type="text" name="title"/>
-
+                <br>
                 <label for="title">Description:</label>
                 <input type="text" name="description"/>
-
+                <br>
                 <label for="title">Price:</label>
                 <input type="number" name="price"/>
-
+                <br>
                 <label for="title">City:</label>
                 <input type="text" name="city"/>
-
+                <br>
                 <label for="title">Name:</label>
                 <input type="text" name="name"/>
-
+                <br>
                 <input type="submit" value="Add a new good">
             </form>
         </div>

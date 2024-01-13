@@ -8,7 +8,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,18 +29,12 @@ public class ProductService {
 
     /**
      * Adds a new product to the database based on the information provided in the InsertProductDTO.
-     * @param insertProductDTO  The data transfer object containing information about the new product.
-     * @return The newly added Product object.
+     *
+     * @param insertProductDTO The data transfer object containing information about the new product.
      * @throws IllegalArgumentException if the insertProductDTO is null.
      */
-    public Product addProduct(InsertProductDTO insertProductDTO) {
-        if (insertProductDTO == null) {
-            throw new IllegalArgumentException("insertProductDTO must not be null");
-        }
-
-        var product = modelMapper.map(insertProductDTO, Product.class);
-
-        return productRepository.saveAndFlush(product);
+    public void addProduct(InsertProductDTO insertProductDTO) {
+        productRepository.saveAndFlush(modelMapper.map(insertProductDTO, Product.class));
     }
 
     public Product getProductById(UUID id) {
@@ -62,9 +55,6 @@ public class ProductService {
      * @param product The Product entity to be deleted from the database.
      */
     public void deleteProductById(Product product) {
-        if (product == null) {
-            throw new IllegalArgumentException("Product must not be null");
-        }
         productRepository.deleteById(product.getId());
     }
 
@@ -75,10 +65,6 @@ public class ProductService {
      * @throws IllegalArgumentException if the input Product is null.
      */
     public ProductDTO mapToDTO(Product product) {
-        if (product == null) {
-            throw new IllegalArgumentException("product must not be null");
-        }
-
         return modelMapper.map(product, ProductDTO.class);
     }
 }

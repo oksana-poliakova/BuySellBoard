@@ -1,17 +1,14 @@
 package com.example.buysellboard.controllers;
 
 import com.example.buysellboard.dtos.product.InsertProductDTO;
-import com.example.buysellboard.dtos.product.ProductDTO;
 import com.example.buysellboard.entities.Product;
 import com.example.buysellboard.services.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,19 +29,22 @@ public class ProductController {
     }
 
     @GetMapping("/")
-    public String products() {
+    public String products(Model model) {
+        model.addAttribute("products", productService.getAllProducts());
         return "products";
     }
 
     /**
      * Controller method for handling POST requests to add a product to the database.
+     *
      * @param insertProductDTO The data transfer object containing information about the new product.
      * @return The ProductDTO representing the newly added product.
      */
-    @PostMapping("/addProduct")
+    @PostMapping("/product/create")
     @Operation(summary = "Possibility to add a product to the database")
-    public ProductDTO addProduct(@Valid @RequestBody InsertProductDTO insertProductDTO) {
-        return productService.mapToDTO(productService.addProduct(insertProductDTO));
+    public String createProduct(@Valid @RequestBody InsertProductDTO insertProductDTO) {
+       productService.mapToDTO(productService.addProduct(insertProductDTO));
+        return "redirect:/";
     }
 
     /**
@@ -57,13 +57,23 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
+    @GetMapping("/product/{id}")
+    public String getProductInfo(@PathVariable UUID id, Model model) {
+        Product product = productService.getProductById(id);
+        model.addAttribute("product_info", product);
+        return "product_info";
+    }
+
     /**
      * Controller method for handling DELETE requests to delete a product from the database by its ID.
+     *
      * @param product product The Product entity to be deleted from the database.
+     * @return
      */
-    @DeleteMapping("/deleteById")
+    @DeleteMapping("/product/delete/{product}")
     @Operation(summary = "Possibility to delete a product by id")
-    public void deleteProductById(Product product) {
+    public String deleteProductById(@PathVariable Product product) {
         productService.deleteProductById(product);
+        return "redirect:/";
     }
 }

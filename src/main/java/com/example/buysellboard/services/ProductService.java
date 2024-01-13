@@ -44,6 +44,10 @@ public class ProductService {
         return productRepository.saveAndFlush(product);
     }
 
+    public Product getProductById(UUID id) {
+        return productRepository.findById(id).get();
+    }
+
     /**
      * Retrieves a list of all products from the database.
      * @return A List of Product objects representing all products in the database.

@@ -4,6 +4,7 @@ import com.example.buysellboard.dtos.product.InsertProductDTO;
 import com.example.buysellboard.dtos.product.ProductDTO;
 import com.example.buysellboard.entities.Product;
 import com.example.buysellboard.repository.ProductRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,8 +38,22 @@ public class ProductService {
         productRepository.saveAndFlush(modelMapper.map(insertProductDTO, Product.class));
     }
 
+    /**
+     * Retrieves a product from the database based on its unique identifier.
+     *
+     * @param id The unique identifier (UUID) of the product to retrieve.
+     * @return The Product entity associated with the given identifier, or null if not found.
+     */
     public Product getProductById(UUID id) {
-        return productRepository.findById(id).get();
+        return productRepository.findById(id).orElse(null);
+    }
+
+    public Product findByTitle(String title) {
+        if (title != null) {
+            return productRepository.findByTitle(title).orElse(null);
+        } else {
+            return null;
+        }
     }
 
     /**

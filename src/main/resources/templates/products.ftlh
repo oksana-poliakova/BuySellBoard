@@ -14,6 +14,14 @@
                 <p><a href="/product/${product.id}">Read more</a></p>
             </div>
         </#list>
+        <div>
+            <form action="/" method="get">
+                <label for="searchByTitle">Search by title</label>
+                <input type="text" name="searchByTitle">
+                <br>
+                <input type="submit" value="Search">
+            </form>
+        </div>
         <h3>Add a new good</h3>
         <div>
             <form action="/product/create" method="post">

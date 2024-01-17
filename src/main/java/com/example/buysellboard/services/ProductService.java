@@ -8,7 +8,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,10 +32,9 @@ public class ProductService {
      * Adds a new product to the database based on the information provided in the InsertProductDTO.
      *
      * @param insertProductDTO The data transfer object containing information about the new product.
-     * @throws IllegalArgumentException if the insertProductDTO is null.
      */
-    public void addProduct(InsertProductDTO insertProductDTO) {
-        productRepository.saveAndFlush(modelMapper.map(insertProductDTO, Product.class));
+    public Product addProduct(InsertProductDTO insertProductDTO) {
+        return productRepository.saveAndFlush(modelMapper.map(insertProductDTO, Product.class));
     }
 
     /**
@@ -49,43 +47,45 @@ public class ProductService {
         return productRepository.findById(id).orElse(null);
     }
 
-//    public Optional<Product> getProductByTitle(String title) {
-//        if (title != null) {
-//            return productRepository.getProductByTitle(title);
-//        } else {
-//            return Optional.empty();
-//        }
-//    }
-
+    /**
+     * Retrieves a product from the repository based on its title.
+     *
+     * @param title The title of the product to be retrieved.
+     * @return Optional containing the retrieved product or empty if not found.
+     */
     public Optional<Product> getProductByTitle(String title) {
+
+        // Check if the title is not null, then retrieve the product by title
         return Optional.ofNullable(title)
                 .flatMap(productRepository::getProductByTitle);
     }
 
     /**
      * Retrieves a list of all products from the database.
-     * @return A List of Product objects representing all products in the database.
-     * If no products are found, an empty list is returned.
+     *
+     * @return List of Optional ProductDTOs representing the mapped products
      */
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<Optional<ProductDTO>> getAllProducts() {
+        var productDTOS = productRepository.findAll();
+
+        // Map each product to its corresponding DTO and collect the results in a List
+        return productDTOS.stream().map(arg -> mapToDTO(Optional.of(arg))).toList();
     }
 
     /**
      * Deletes a product from the database using its unique identifier.
-     * @param product The Product entity to be deleted from the database.
      */
-    public void deleteProductById(Product product) {
-        productRepository.deleteById(product.getId());
+    public void deleteProductById(UUID id) {
+        productRepository.deleteById(id);
     }
 
     /**
      * Maps a Product entity to a corresponding ProductDTO using the modelMapper.
-     * @param product The Product entity to be mapped to a ProductDTO.
-     * @return The mapped ProductDTO representing the same information as the input Product.
-     * @throws IllegalArgumentException if the input Product is null.
+     * Maps an Optional of Product to an Optional of ProductDTO using ModelMapper.
+     * @param product Optional of Product to be mapped
+     * @return Optional of ProductDTO, representing the mapped result
      */
-    public ProductDTO mapToDTO(Product product) {
-        return modelMapper.map(product, ProductDTO.class);
+    public Optional<ProductDTO> mapToDTO(Optional<Product> product) {
+        return Optional.of(modelMapper.map(product, ProductDTO.class));
     }
 }

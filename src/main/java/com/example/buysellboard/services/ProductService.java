@@ -4,12 +4,13 @@ import com.example.buysellboard.dtos.product.InsertProductDTO;
 import com.example.buysellboard.dtos.product.ProductDTO;
 import com.example.buysellboard.entities.Product;
 import com.example.buysellboard.repository.ProductRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -48,12 +49,17 @@ public class ProductService {
         return productRepository.findById(id).orElse(null);
     }
 
-    public Product findByTitle(String title) {
-        if (title != null) {
-            return productRepository.findByTitle(title).orElse(null);
-        } else {
-            return null;
-        }
+//    public Optional<Product> getProductByTitle(String title) {
+//        if (title != null) {
+//            return productRepository.getProductByTitle(title);
+//        } else {
+//            return Optional.empty();
+//        }
+//    }
+
+    public Optional<Product> getProductByTitle(String title) {
+        return Optional.ofNullable(title)
+                .flatMap(productRepository::getProductByTitle);
     }
 
     /**

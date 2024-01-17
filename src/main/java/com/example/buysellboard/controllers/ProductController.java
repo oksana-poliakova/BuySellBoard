@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -33,6 +35,13 @@ public class ProductController {
     @GetMapping("/")
     public String products(Model model) {
         model.addAttribute("products", productService.getAllProducts());
+        return "products";
+    }
+
+    @GetMapping("/getByTitle")
+    public String getProductByTitle(@RequestParam(name = "searchByTitle", required = false) String title, Model model) {
+        Optional<Product> products = productService.getProductByTitle(title);
+        model.addAttribute("products", products.orElse(null));
         return "products";
     }
 

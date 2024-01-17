@@ -7,15 +7,19 @@
     <body>
         <h1>Hello BuySellBoard!</h1>
         <h3>Goods from all over Austria</h3>
-        <#list products as product>
-            <div>
-                <p><b>${product.title}</b></p>
-                <p><b>${product.price} EUR</b></p>
-                <p><a href="/product/${product.id}">Read more</a></p>
-            </div>
-        </#list>
+        <#if products?? && products?size != 0>
+            <#list products as product>
+                <div>
+                    <p><b>${product.title}</b></p>
+                    <p><b>${product.price} EUR</b></p>
+                    <p><a href="/product/${product.id}">Read more</a></p>
+                </div>
+            </#list>
+        <#else>
+            <h3>There are no goods</h3>
+        </#if>
         <div>
-            <form action="/" method="get">
+            <form action="/getByTitle" method="get">
                 <label for="searchByTitle">Search by title</label>
                 <input type="text" name="searchByTitle">
                 <br>

@@ -2,12 +2,16 @@ package com.example.buysellboard.services;
 
 import com.example.buysellboard.dtos.product.InsertProductDTO;
 import com.example.buysellboard.dtos.product.ProductDTO;
+import com.example.buysellboard.entities.Image;
 import com.example.buysellboard.entities.Product;
 import com.example.buysellboard.repository.ProductRepository;
+import jakarta.mail.Multipart;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,8 +37,53 @@ public class ProductService {
      *
      * @param insertProductDTO The data transfer object containing information about the new product.
      */
-    public Product addProduct(InsertProductDTO insertProductDTO) {
-        return productRepository.saveAndFlush(modelMapper.map(insertProductDTO, Product.class));
+    public Product addProduct(InsertProductDTO insertProductDTO,
+                              MultipartFile file1,
+                              MultipartFile file2,
+                              MultipartFile file3) throws IOException {
+
+        Image image1;
+        Image image2;
+        Image image3;
+
+        Product product = modelMapper.map(insertProductDTO, Product.class);
+
+        if (file1.getSize() != 0) {
+            image1 = toImageEntity(file1);
+            image1.setPreviewImage(true);
+            product.addImageToProduct(image1);
+        }
+
+        if (file2.getSize() != 0) {
+            image2 = toImageEntity(file2);
+            product.addImageToProduct(image2);
+        }
+
+        if (file3.getSize() != 0) {
+            image3 = toImageEntity(file3);
+            product.addImageToProduct(image3);
+        }
+
+        Product productFromDb = productRepository.save(product);
+        productFromDb.setPreviewImageId(productFromDb.getImageList().get(0).getId());
+        return productRepository.saveAndFlush(product);
+    }
+
+    /**
+     * Converts a MultipartFile to an Image entity.
+     *
+     * @param file The MultipartFile to be converted.
+     * @return The created Image entity with properties set based on the MultipartFile.
+     * @throws IOException If an I/O error occurs while processing the MultipartFile.
+     */
+    private Image toImageEntity(MultipartFile file) throws IOException {
+        Image image = new Image();
+        image.setName(file.getName());
+        image.setOriginalFileName(file.getOriginalFilename());
+        image.setContentType(file.getContentType());
+        image.setSize(file.getSize());
+        image.setBytes(file.getBytes());
+        return image;
     }
 
     /**
@@ -69,7 +118,7 @@ public class ProductService {
         var productDTOS = productRepository.findAll();
 
         // Map each product to its corresponding DTO and collect the results in a List
-        return productDTOS.stream().map(arg -> mapToDTO(Optional.of(arg))).toList();
+        return productDTOS.stream().map(arg -> mapToDTO(Optional.of(arg).get())).toList();
     }
 
     /**
@@ -85,7 +134,7 @@ public class ProductService {
      * @param product Optional of Product to be mapped
      * @return Optional of ProductDTO, representing the mapped result
      */
-    public Optional<ProductDTO> mapToDTO(Optional<Product> product) {
+    public Optional<ProductDTO> mapToDTO(Product product) {
         return Optional.of(modelMapper.map(product, ProductDTO.class));
     }
 }
